@@ -10,10 +10,16 @@ bp = Blueprint("tasks", __name__)
 @bp.route("/tasks")
 class Tasks(MethodView):
     @jwt_required()
+    @bp.response(200, TaskSchema(many=True))
+    def get(self):
+        """Get all tasks - Protected route (JWT Required)"""
+        return TaskController.get_all()
+
+    @jwt_required()
     @bp.arguments(TaskSchema)
     @bp.response(201)
     def post(self, data):
-        """Protected route (JWT Required)"""
+        """Create new task - Protected route (JWT Required)"""
         return TaskController.create(data)
 
 
@@ -29,14 +35,27 @@ class TasksOnUser(MethodView):
 @bp.route("/tasks/<task_id>")
 class TaskById(MethodView):
     @jwt_required()
+    @bp.response(200, TaskSchema)
+    def get(self, task_id):
+        """Get task by ID - Protected route (JWT Required)"""
+        return TaskController.get_by_id(task_id)
+
+    @jwt_required()
     @bp.arguments(UpdateTaskSchema)
     @bp.response(200)
     def put(self, data, task_id):
-        """Protected route (JWT Required)"""
+        """Update entire task - Protected route (JWT Required)"""
         return TaskController.update(data, task_id)
+
+    @jwt_required()
+    @bp.arguments(UpdateTaskSchema)
+    @bp.response(200)
+    def patch(self, data, task_id):
+        """Partially update task - Protected route (JWT Required)"""
+        return TaskController.patch(data, task_id)
 
     @jwt_required()
     @bp.response(204)
     def delete(self, task_id):
-        """Protected route (JWT Required)"""
+        """Delete task - Protected route (JWT Required)"""
         return TaskController.delete(task_id)

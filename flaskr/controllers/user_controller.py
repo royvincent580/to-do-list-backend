@@ -65,12 +65,49 @@ class UserController:
                 setattr(user, key, value)
             
             db.session.commit()
-            return user
+            return user.to_dict()
         except NoResultFound:
             abort(404, message="User not found")
         except SQLAlchemyError:
             db.session.rollback()
             abort(500, message="Internal server error while updating user")
+
+    @staticmethod
+    def patch(data, user_id):
+        try:
+            user = db.session.execute(
+                select(UserModel).where(UserModel.id == user_id)
+            ).scalar_one()
+            
+            # Only update fields that are provided
+            for key, value in data.items():
+                if hasattr(user, key):
+                    if key == "password":
+                        value = generate_password(value)
+                    setattr(user, key, value)
+            
+            db.session.commit()
+            return user.to_dict()
+        except NoResultFound:
+            abort(404, message="User not found")
+        except SQLAlchemyError:
+            db.session.rollback()
+            abort(500, message="Internal server error while patching user")
+
+    @staticmethod
+    def delete_by_id(user_id):
+        try:
+            user = db.session.execute(
+                select(UserModel).where(UserModel.id == user_id)
+            ).scalar_one()
+
+            db.session.delete(user)
+            db.session.commit()
+        except NoResultFound:
+            abort(404, message="User not found")
+        except SQLAlchemyError:
+            db.session.rollback()
+            abort(500, message="Internal server error while deleting user")
 
     @staticmethod
     def delete():

@@ -1,10 +1,11 @@
 from sqlalchemy import ForeignKey, String, DateTime, Column, Integer
 from sqlalchemy.orm import relationship
+from sqlalchemy_serializer import SerializerMixin
 from flaskr.db import db
 from datetime import datetime, timezone
 
 
-class TaskTagModel(db.Model):
+class TaskTagModel(db.Model, SerializerMixin):
     __tablename__ = "task_tags"
 
     id = Column(Integer, primary_key=True)
@@ -18,3 +19,5 @@ class TaskTagModel(db.Model):
     # Relationships
     task = relationship("TaskModel", back_populates="task_tags")
     tag = relationship("TagModel", back_populates="task_tags")
+    
+    serialize_rules = ('-task.task_tags', '-tag.task_tags')

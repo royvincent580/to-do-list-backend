@@ -10,6 +10,26 @@ from flaskr.models.task_tag_model import TaskTagModel
 
 class TaskController:
     @staticmethod
+    def get_all():
+        try:
+            tasks = db.session.execute(select(TaskModel)).scalars().all()
+            return [task.to_dict() for task in tasks]
+        except SQLAlchemyError:
+            abort(500, message="Internal server error while fetching tasks")
+
+    @staticmethod
+    def get_by_id(task_id):
+        try:
+            task = db.session.execute(
+                select(TaskModel).where(TaskModel.id == task_id)
+            ).scalar_one()
+            return task.to_dict()
+        except NoResultFound:
+            abort(404, message="Task not found")
+        except SQLAlchemyError:
+            abort(500, message="Internal server error while fetching task")
+
+    @staticmethod
     def get_all_on_user():
         try:
             user_id = get_jwt_identity()
@@ -33,15 +53,11 @@ class TaskController:
     def create(data):
         try:
             user_id = get_jwt_identity()
-
-            print(data)
-
             create_data = {"user_id": user_id, **data}
-
             new_task = TaskModel(**create_data)
-
             db.session.add(new_task)
             db.session.commit()
+            return new_task.to_dict()
         except SQLAlchemyError:
             db.session.rollback()
             abort(500, message="Internal server error while creating task")
@@ -52,18 +68,36 @@ class TaskController:
             task = db.session.execute(
                 select(TaskModel).where(TaskModel.id == task_id)
             ).scalar_one()
-
-            task.title = data["title"]
-            task.content = data["content"]
-            task.status = data["status"]
-
+            for key, value in data.items():
+                if hasattr(task, key):
+                    setattr(task, key, value)
             db.session.add(task)
             db.session.commit()
+            return task.to_dict()
         except NoResultFound:
             abort(404, message="Task not found")
         except SQLAlchemyError:
             db.session.rollback()
             abort(500, message="Internal server error while updating task")
+
+    @staticmethod
+    def patch(data, task_id):
+        try:
+            task = db.session.execute(
+                select(TaskModel).where(TaskModel.id == task_id)
+            ).scalar_one()
+            # Only update fields that are provided
+            for key, value in data.items():
+                if hasattr(task, key):
+                    setattr(task, key, value)
+            db.session.add(task)
+            db.session.commit()
+            return task.to_dict()
+        except NoResultFound:
+            abort(404, message="Task not found")
+        except SQLAlchemyError:
+            db.session.rollback()
+            abort(500, message="Internal server error while patching task")
 
     @staticmethod
     def delete(task_id):

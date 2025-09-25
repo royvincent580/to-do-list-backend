@@ -1,7 +1,7 @@
 from flask_jwt_extended import jwt_required
 from flask_smorest import Blueprint
 from flask.views import MethodView
-from flaskr.schemas.schema import UserSchema
+from flaskr.schemas.schema import UserSchema, UserUpdateSchema
 from flaskr.controllers.user_controller import UserController
 
 bp = Blueprint("users", __name__)
@@ -29,6 +29,15 @@ class UserById(MethodView):
     @bp.response(200, UserSchema)
     def put(self, data, user_id):
         return UserController.update(data, user_id)
+
+    @bp.arguments(UserUpdateSchema)
+    @bp.response(200, UserSchema)
+    def patch(self, data, user_id):
+        return UserController.patch(data, user_id)
+
+    @bp.response(204)
+    def delete(self, user_id):
+        return UserController.delete_by_id(user_id)
 
 
 @bp.route("/users/account")

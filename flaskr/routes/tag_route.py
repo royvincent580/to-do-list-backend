@@ -1,7 +1,7 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from flaskr.controllers.tag_controller import TagController
-from flaskr.schemas.schema import TagSchema
+from flaskr.schemas.schema import TagSchema, TagUpdateSchema
 
 bp = Blueprint("tags", __name__)
 
@@ -20,10 +20,19 @@ class Tags(MethodView):
 
 @bp.route("/tags/<tag_id>")
 class TagById(MethodView):
+    @bp.response(200, TagSchema)
+    def get(self, tag_id):
+        return TagController.get_by_id(tag_id)
+
     @bp.arguments(TagSchema)
     @bp.response(200, TagSchema)
     def put(self, data, tag_id):
         return TagController.update(data, tag_id)
+
+    @bp.arguments(TagUpdateSchema)
+    @bp.response(200, TagSchema)
+    def patch(self, data, tag_id):
+        return TagController.patch(data, tag_id)
     
     @bp.response(204)
     def delete(self, tag_id):
