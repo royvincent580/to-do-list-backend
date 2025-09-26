@@ -42,11 +42,27 @@ A Flask REST API backend for a collaborative to-do list application with user au
 
 ## Running the Application
 
-```bash
-flask --app application.py run --debug
-```
+1. Activate virtual environment:
+   ```bash
+   pipenv shell
+   ```
 
-The API will be available at `http://localhost:5000`
+2. Start the server:
+   ```bash
+   flask --app application.py run --debug
+   ```
+
+3. The API will be available at `http://localhost:5000`
+
+## Accessing in Browser
+
+Open Chrome/Firefox and visit:
+- `http://localhost:5000/docs` - Swagger API documentation
+- `http://localhost:5000/api/v1/users` - Users endpoint
+- `http://localhost:5000/api/v1/tasks` - Tasks endpoint (requires JWT token)
+- `http://localhost:5000/api/v1/tags` - Tags endpoint
+- `http://localhost:5000/api/v1/auth/register` - Register endpoint
+- `http://localhost:5000/api/v1/auth/login` - Login endpoint
 
 ## API Endpoints
 
