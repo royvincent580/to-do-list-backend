@@ -28,7 +28,10 @@ def create_app(test_config=None):
     db.init_app(app)
     migrate.init_app(app, db)
     api.init_app(app)
-    cors.init_app(app)
+    cors.init_app(app, 
+                  origins=["*"],
+                  allow_headers=["Content-Type", "Authorization"],
+                  methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
     jwt.init_app(app)
 
     api.register_blueprint(auth_route, url_prefix="/api/v1")

@@ -33,7 +33,7 @@ class TaskController:
     def get_all_on_user():
         try:
             user_id = get_jwt_identity()
-            return (
+            results = (
                 db.session.query(
                     TaskModel.id,
                     TaskModel.title,
@@ -43,9 +43,21 @@ class TaskController:
                     TagModel.name.label("tag_name"),
                 )
                 .where(TaskModel.user_id == user_id)
-                .join(TagModel, TaskModel.tag_id == TagModel.id)
+                .join(TagModel, TaskModel.tag_id == TagModel.id, isouter=True)
                 .all()
             )
+            
+            return [
+                {
+                    "id": result.id,
+                    "title": result.title,
+                    "content": result.content,
+                    "status": result.status.value if hasattr(result.status, 'value') else result.status,
+                    "createdAt": result.created_at.isoformat() if result.created_at else None,
+                    "tags": [{"name": result.tag_name}] if result.tag_name else []
+                }
+                for result in results
+            ]
         except SQLAlchemyError:
             abort(500, message="Internal server error while fetching tasks on user")
 
