@@ -96,9 +96,8 @@ class UserTaskController:
                 {
                     "id": task.TaskModel.id,
                     "title": task.TaskModel.title,
-                    "description": task.TaskModel.description,
-                    "status": task.TaskModel.status,
-                    "priority": task.TaskModel.priority,
+                    "content": task.TaskModel.content,
+                    "status": task.TaskModel.status.value if hasattr(task.TaskModel.status, 'value') else task.TaskModel.status,
                     "role": task.role,
                     "joined_at": task.joined_at,
                     "owner_id": task.TaskModel.user_id
