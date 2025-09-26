@@ -1,7 +1,8 @@
 import flaskr.models
 
+import os
 from flask import Flask
-from config import DevelopmentConfig
+from config import DevelopmentConfig, ProductionConfig
 from flaskr.extensions import migrate, api, cors, jwt
 from flaskr.db import db
 
@@ -17,7 +18,10 @@ def create_app(test_config=None):
     app = Flask(__name__)
 
     if test_config is None:
-        app.config.from_object(DevelopmentConfig)
+        if os.getenv('FLASK_ENV') == 'production':
+            app.config.from_object(ProductionConfig)
+        else:
+            app.config.from_object(DevelopmentConfig)
     else:
         app.config.from_object(test_config)
 
