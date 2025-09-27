@@ -1,8 +1,7 @@
 from flaskr.db import db
-from sqlalchemy_serializer import SerializerMixin
 
 
-class AdminModel(db.Model, SerializerMixin):
+class AdminModel(db.Model):
     __tablename__ = "admins"
 
     id = db.Column(db.Integer, primary_key=True)

@@ -1,11 +1,10 @@
 from sqlalchemy import String, Column, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from sqlalchemy_serializer import SerializerMixin
 from flaskr.db import db
 
 
-class UserTaskModel(db.Model, SerializerMixin):
+class UserTaskModel(db.Model):
     __tablename__ = "user_tasks"
 
     id = Column(Integer, primary_key=True)
@@ -18,4 +17,3 @@ class UserTaskModel(db.Model, SerializerMixin):
     user = relationship("UserModel", back_populates="user_tasks")
     task = relationship("TaskModel", back_populates="user_tasks")
     
-    serialize_rules = ('-user.user_tasks', '-task.user_tasks')

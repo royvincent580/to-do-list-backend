@@ -1,7 +1,6 @@
 from enum import Enum
 from sqlalchemy import ForeignKey, String, Enum as SaEnum, Column, Integer, DateTime
 from sqlalchemy.orm import relationship
-from sqlalchemy_serializer import SerializerMixin
 from flaskr.db import db
 from datetime import datetime, timezone
 
@@ -12,7 +11,7 @@ class TaskStatus(Enum):
     COMPLETED = "COMPLETED"
 
 
-class TaskModel(db.Model, SerializerMixin):
+class TaskModel(db.Model):
     __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True)
