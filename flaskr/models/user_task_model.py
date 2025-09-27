@@ -17,3 +17,11 @@ class UserTaskModel(db.Model):
     user = relationship("UserModel", back_populates="user_tasks")
     task = relationship("TaskModel", back_populates="user_tasks")
     
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'task_id': self.task_id,
+            'role': self.role,
+            'joined_at': self.joined_at.isoformat() if self.joined_at else None
+        }
