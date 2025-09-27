@@ -12,4 +12,8 @@ class TagModel(db.Model):
     # Many-to-many relationship with tasks through association table
     task_tags = relationship("TaskTagModel", back_populates="tag", cascade="all, delete-orphan")
     
-    serialize_rules = ('-task_tags.tag',)
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }

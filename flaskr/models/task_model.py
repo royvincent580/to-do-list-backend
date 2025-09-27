@@ -33,4 +33,13 @@ class TaskModel(db.Model):
     # Many-to-many relationship with users through collaboration
     user_tasks = relationship("UserTaskModel", back_populates="task", cascade="all, delete-orphan")
     
-    serialize_rules = ('-user.tasks', '-task_tags.task', '-user_tasks.task')
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'content': self.content,
+            'status': self.status.value if hasattr(self.status, 'value') else self.status,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'user_id': self.user_id,
+            'tag_id': self.tag_id
+        }
